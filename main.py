@@ -5,7 +5,7 @@ import messages
 import sqlite3
 
 def add_task(update, context):
-    connection = sqlite3.connect(config.db_name)
+    connection = sqlite3.connect(config.db_path)
     cursor = connection.cursor()
     cursor.execute('INSERT INTO tasks (user_id,task) VALUES (?,?);',\
             (update.effective_user.id, update.message.text))
@@ -18,7 +18,7 @@ def add_task(update, context):
     
 
 def start(update, context):
-    connection = sqlite3.connect(config.db_name)
+    connection = sqlite3.connect(config.db_path)
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM users WHERE id=?;',\
             (update.effective_user.id,))
@@ -44,7 +44,7 @@ def build_tasks_list(user_id):
     return '\n'.join([str(i+1)+'. '+tasks[i] for i in range(len(tasks))])
 
 def get_tasks(user_id):
-    conn = sqlite3.connect(config.db_name)
+    conn = sqlite3.connect(config.db_path)
     c = conn.cursor()
     c.execute('SELECT task FROM tasks WHERE user_id=?;', (user_id,))
     result = c.fetchall()
@@ -56,7 +56,7 @@ def solve(update, context):
         context.bot.send_message(chat_id = update.effective_chat.id,\
                 text = messages.build_solve_message([]))
         return
-    connection = sqlite3.connect(config.db_name)
+    connection = sqlite3.connect(config.db_path)
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM tasks WHERE user_id=?;',\
             (update.effective_user.id,))
@@ -90,7 +90,7 @@ def check_int(a, maxQ):
         return 0
 
 def clear(update, context):
-    connection = sqlite3.connect(config.db_name)
+    connection = sqlite3.connect(config.db_path)
     cursor = connection.cursor()
     cursor.execute('DELETE FROM tasks WHERE user_id=?;',\
             (update.effective_user.id,))
